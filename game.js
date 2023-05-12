@@ -56,59 +56,31 @@ class Level1 extends Phaser.Scene {
         this.load.image('Beige', 'Beige.png');
     }
     create() {
-        // as the levels increase maybe the bar descreases in scale
-        //combine these if can crop better if not just bring side of wall to side of crop
-        //resize and recrop wall images
         const Leftwall = this.add.image(100, 468, 'Rightwall').setScale(0.50);
         const Rightwall = this.add.image(1190, 468, 'Leftwall').setScale(0.50);
         //const Ball = this.physics.add.image('Ball').setScale(0.20);
         const Bar = this.add.image(600, 1015, 'Bar').setScale(0.40);
         //const cursors = this.input.keyboard.createCursorKeys();
 
-        //Add more bricks(less color??)
-        //all colors but one of each and each level adds another row possibly (and top or bottom has effect of taking two hits)
-        //const brick = this.add.image(850,870, 'Red').setScale(0.20);
-        this.add.text(20, 20, "Level: 1").setFontSize(50).setAlpha(0);
+        this.add.text(120, 20, "Level: 1", { color: '#000000'}).setFontSize(40);
         this.cameras.main.setBackgroundColor(0xf3e5ab);
-        //this.add.text(40,20, "Lives: ").setFontSize(50).setAlpha(0);
-        //Options:
-        // 1: when bar misses ball go to game over/level lost with report of missing ball
-        // 2: have lives what that when ball is missid starts again at the bar for three times edits lives: text and on third attempt goes to game over or level lost
-        // when going to game over/level lost screen does it go back to scene or cover??
 
-        //should I have an instruction page that explains how to control bar and what bricks take more than one hit??
-        //if this works i dont think i need the walls
         this.physics.world.setBoundsCollision(true, true, true, false);
 
         this.bricks = this.physics.add.staticGroup();
-        // const redBrick = this.bricks.create(850, 870, 'Red').setScale(0.20);
-        // const peachBrick = this.bricks.create(800, 800, 'Peach').setScale(0.20);
-        //const beigeBrick = this.bricks.create(600, 600, 'Beige').setScale(0.20);
-
 
         this.bricks = this.physics.add.staticGroup({
             key: ['Red', 'Peach', 'Beige'],
             frameQuantity: 2,
             gridAlign: {
-                width: 2,
-                height: 3,
+                width: 1,
+                height: 30,
                 cellWidth: 20,
-                cellHeight: 40,
-                x: 112,
+                cellHeight: 60,
+                x: 350,
                 y: 100
             }
         });
-
-        // this.bricks = this.physics.add.staticGroup({
-        //     key: 'assets', frame: ['Red','Peach','Beige'],
-        //     frameQuantity: 2,
-        //     gridAlign: {width: 2, height: 3, cellWidth: 64, cellHeight: 32, x: 112, y: 100}
-        // });
-
-        //for when ball hits bricks
-        // this.bricks.getchildren().forEach(brick => {
-        //     brick.setInteractive();
-
 
         this.Ball = this.physics.add.image(600, 1015, 'Ball')
             .setCollideWorldBounds(true)
@@ -116,20 +88,17 @@ class Level1 extends Phaser.Scene {
             .setScale(0.20);
         this.Ball.setData('onBar', true);
 
-        this.Bar = this.physics.add.image(600, 15, 'Bar')
-            .setImmovable().setScale(0.40);
+        Bar.x = Bar;
 
         this.physics.add.collider(this.Ball, this.bricks, this.hitBrick, null, this);
         this.physics.add.collider(this.Ball, this.Bar, this.hitBar, null, this);
 
-        this.input.on('pointermove', function (pointer) { //this.Bar.x = Phaser.Math.Clamp(pointer.x, 650, 1455);
+        this.input.on('pointermove', function (pointer) {
             Bar.x = Phaser.Math.Clamp(pointer.x, 650 - Bar.width / 2, 1455 - Bar.width / 2);
             if (this.Ball.getData('onBar')) {
-                this.Ball.x = this.Bar.x;
+                this.Ball.x = this.Bar;
             }
-            // if (Ball.getData('onBar')){
-            //     Ball.x = Bar.x;
-            // }
+          
         }, this);
 
         this.input.on('pointerup', function (pointer) {
@@ -149,16 +118,9 @@ class Level1 extends Phaser.Scene {
 
     resetBall() {
         this.Ball.setVelocity(0);
-        this.Ball.setPosition(this.Bar.x, 500);
+        this.Ball.setPosition(this.Bar, 500);
         this.Ball.setData('onBar', true);
     }
-    // //and i having more than one life?
-    //     resetLevel(){
-    //         this.resetBall();
-    //         this.bricks.children.each(brick => {
-    //             brick.enableBody(false, 0, 0, true, true);
-    //         });
-    //     }
 
     hitBar(Ball, Bar) {
         let diff = 0;
@@ -176,77 +138,10 @@ class Level1 extends Phaser.Scene {
     }
 
     update() {
-        if (this.Ball.y > 600) {
+        if (this.Ball.y > 900) {
             this.resetBall();
         }
     }
-
-    //Ball.setData('onBar',true);
-
-    // Ball.setCollideWorldBounds(true);
-    // Ball.setBounce(1);
-    // Ball.setVelocity(150);
-    // this.physics.add.collider(Ball);
-
-
-
-    // this.input.on('pointerdown', () => {
-    //     if (Ball.getData('onBar')) {
-    //         Ball.setData("onBar", false);
-    //         Ball.setVelocity(200,-200);
-    //     }
-    // });
-
-    // this.physics.add.collider(Ball, Bar, () => {
-    //     if (!Ball.getData('onBar')){
-    //         Ball.setVelocityY(-Ball.body.velocity.y);
-    //     }
-    // });
-
-    // //enable mouse input
-    //         this.input.on('pointerdown', () => {
-    //             if (Ball.getData('onBar')) {
-    //                 Ball.setData('onBar', false)
-    //                 Ball.setVelocity(200, -200);
-    //             }
-    //         });
-
-    //         // this.input.keyboard.on('keydown-LEFT', () => {
-    //         //     Bar.x -= 10;
-    //         //     Bar.x = Phaser.Math.Clamp(Bar.x, Leftwall.width + Bar.displayWidth / 2, this.sys.game.config.width - Rightwall.width - Bar.displayWidth /2);
-    //         // });
-
-    //         // this.input.keyboard.on('keydown-RIGHT', () => {
-    //         //     Bar.x += 10;
-    //         //     Bar.x = Phaser.Math.Clamp(Bar.x, Leftwall.width + Bar.displayWidth /2, this.sys.game.config.width - Rightwall.width + Bar.displayWidth /2);
-    //         // });
-
-    //         // this.physics.world.setBoundCollision(true, true, ture, false); //enable collision with the world bounds
-    //         // this.physics.add.collider(Ball, Bar, () =>{
-    //         //     if (!Ball.getData('onBar')) {
-    //         //         Ball.setVelocityY(-Ball.body.velocity.y);
-    //         //     }
-    //         // });
-
-    // //bar
-    // //enable mouse input
-    //         this.input.on('pointermove', (pointer) => {
-    //             Bar.x = Phaser.Math.Clamp(pointer.x, Leftwall.width, this.sys.game.config.width - Rightwall.width);
-    //         });
-
-    // //Update the bar's position based on keyboard input
-    //         this.input.keyboard.on('keydown_LEFT', () => {
-    //             Bar.x -= 10;
-    //             Bar.x = Phaser.Math.Clamp(bar.x, Leftwall.width, this.sys.game.config.width - Rightwall.width);
-    //         });
-
-    //         this.input.keyboard.on('keydown_Right', () => {
-    //             Bar.x += 10;
-    //             Bar.x = Phaser.Math.Clamp(bar.x, Leftwall.width, this.sys.game.config.width - Rightwall.width);
-    //         });
-
-
-
 }
 
 
@@ -429,8 +324,13 @@ const config = {
     type: Phaser.WEBGL,
     width: 1300,
     height: 1070,
-
-
+    scene: [Level1],
+    //scene: [Cover, Level1, Level2, Level3, GameOver, GameComplete],
+    title: "Pysics Game",
+    physics: {
+        default: 'arcade'
+    }
+};
 
     // const game = new Phaser.Game({
     //     type: Phaser.Auto,
@@ -455,13 +355,7 @@ const config = {
     //         height: 1070
     //     },
     //possibly combining: Result 1,2,and 3 with Game Over
-    scene: [Level1],
-    //scene: [Cover, Level1, Level2, Level3, GameOver, GameComplete],
-    title: "Pysics Game",
-    physics: {
-        default: 'arcade'
-    }
-};
+
 const game = new Phaser.Game(config);
     //render: Phaser.Auto,
     //title: "Pysics Game",
