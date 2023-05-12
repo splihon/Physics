@@ -1,4 +1,10 @@
 class Scene extends Phaser.Scene{
+    
+    constructor(key, name) {
+        super(key);
+        this.name = name;
+    }
+
     create(){
         this.add.text(this.w-3*this.s, this.h-3*this.s, "📺")
             .setStyle({ fontSize: `${2 * this.s}px` })
