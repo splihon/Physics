@@ -4,15 +4,127 @@ class Cover extends Phaser.Scene {
     }
     preload(){
         this.preload.path = './assets/';
-        this.load.image();
+        this.load.image('Buttonbackground', 'Buttonbackground.png');
+        this.load.image('Brickbreaker', 'Brickbreaker.png');
+        this.load.image('Play','Play.png');
+        this.load.image('Screenbackground', 'Screenbackground');
+
     }
     create(){
+        this.add.image(320,210, 'Screenbackground').setOrigin(0.20,0.30).setScale(0.60);
+        let Buttonbackground = this.add.image(240,800, 'Buttonbackground').setScale(0.40);
+        this.add.image(240,800, 'Play').setScale(0.40);
+        this.add.image(240,800, 'Brickbreaker').setScale(0.40);
+
 //tint for behind Play button (to be also used for other buttons)
 //bounce for header??
 //delay on play button??
-    this.input.on('pointer')
+        Buttonbackground.setInteractive()
+            .on('pointerdown', () => {
+                //tint affect
+                this.gotoScene('Level1');
+            })
+        }
+}
+
+class Level1 extends Phaser.Scene {
+    constructor(){
+        super("Level1");
+    }
+    preload(){
+        this.preload.path = './assets/';
+        this.load.image('Ball', 'Ball.png');
+        this.load.image('Bar', 'Bar.png');
+        this.load.image('Wall','Wall.png');
+        this.load.image('Red', 'Red.png');
+        }
+    create(){
+//combine these if can crop better if not just bring side of wall to side of crop
+        let Leftwall = this.add.image(850,870, 'Wall').setScale(0.40);
+        let Rightwall = this.add.image(850,870, 'Wall').setScale(0.40);
+        this.add.image(850,870, 'Ball').setScale(0.40);
+        this.add.image(900,870, 'Bar').setScale(0.40);
+//Add more bricks(less color??)
+//all colors but one of each and each level adds another row possibly (and top or bottom has effect of taking two hits)
+        this.add.image(850,870, 'Red').setScale(0.40);
+        this.add.text(20,20, "Level: 1").setFontSize(50).setAlpha(0);
+        //this.add.text(40,20, "Lives: ").setFontSize(50).setAlpha(0);
+        //Options:
+// 1: when bar misses ball go to game over/level lost with report of missing ball
+// 2: have lives what that when ball is missid starts again at the bar for three times edits lives: text and on third attempt goes to game over or level lost
+// when going to game over/level lost screen does it go back to scene or cover??
+
     }
 }
+
+class Level2 extends Phaser.Scene {
+    constructor(){
+        super('Level2');
+    }
+    preload(){
+        this.preload.path = './assets/';
+        this.load.image('Ball', 'Ball.png');
+        this.load.image('Bar', 'Bar.png');
+        this.load.image('Wall','Wall.png');
+        this.load.image('Red', 'Red.png');
+    }
+    create(){
+
+    }
+}
+
+class Level3 extends Phaser.Scene {
+    constructor(){
+        super('Level3');
+    }
+    preload(){
+        this.preload.path = './assets/';
+        this.load.image('Ball', 'Ball.png');
+        this.load.image('Bar', 'Bar.png');
+        this.load.image('Wall','Wall.png');
+        this.load.image('Red', 'Red.png');
+    }
+    create(){
+
+    }
+}
+
+//should I make reults/lost level and game over all one scene
+//so that when ball is missed on missed on third attempt goes to game over screen
+//and game over scene could have two buttons one restart or one continue
+//restart going back to cover and continue going to previous level player lost at
+class GameOver extends Phaser.Scene {
+    constructor(){
+        super('GameOver');
+    }
+    preload(){
+        this.preload.path = './assets/';
+        this.load.image('Buttonbackground', 'Buttonbackground.png');
+        this.load.image('Continue', 'Continue.png');
+        this.load.image('Restart', 'Restart.png');
+        this.load.image('Screenbackground', 'Screenbackground');
+    }
+    create(){
+
+    }
+}
+
+class GameComplete extends Phaser.Scene {
+    constructor(){
+        super('GameComplete');
+    }
+    preload(){
+        this.preload.path = './assets/';
+        this.load.image('Buttonbackground', 'Buttonbackground.png');
+        this.load.image('Restart', 'Restart.png');
+        this.load.image('Screenbackground', 'Screenbackground');
+    }
+    create(){
+        
+    }
+}
+
+
 
 const game = new Phaser.Game({
     scale: {
@@ -21,6 +133,7 @@ const game = new Phaser.Game({
         width: 1920,
         height: 1080
     },
-    scene: [Cover, Level1, Results1, Level2, Results2, Level3, Results3, GameOver, GameComplete],
+    //possibly combining: Result 1,2,and 3 with Game Over
+    scene: [Cover, Level1, Level2, Level3, GameOver, GameComplete],
     title: "Pysics Game",
 });
