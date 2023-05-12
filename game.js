@@ -306,33 +306,3 @@ const config = {
 };
 
 const game = new Phaser.Game(config);
-
-
-
-
-    // const game = new Phaser.Game({
-    //     type: Phaser.Auto,
-    //     width:1300,
-    //     height: 1070,
-    //     physics:{
-    //         default: "arcade",
-    //         arcade: {
-    //             // gravity: {y: 0},
-    //             // debug: false,
-    //             debug: true,
-    //             gravity: {y: 100}
-    //         },
-    //     },
-    // });
-
-    // const game = new Phaser.Game({
-    //     scale: {
-    //         mode: Phaser.Scale.FIT,
-    //         autoCenter: Phaser.Scale.CENTER_BOTH,
-    //         width: 1300,
-    //         height: 1070
-    //     },
-
-    //render: Phaser.Auto,
-    //title: "Pysics Game",
-//});
