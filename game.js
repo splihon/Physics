@@ -12,8 +12,8 @@ class Cover extends Phaser.Scene {
     }
     create(){
         this.add.image(320,210, 'Screenbackground').setOrigin(0.25,0.30).setScale(0.70);
-        let Buttonbackground = this.add.image(680,800, 'Buttonbackground').setScale(0.40);
-        this.add.image(680,800, 'Play').setScale(0.40);
+        let Buttonbackground = this.add.image(680,870, 'Buttonbackground').setScale(0.40);
+        this.add.image(680,870, 'Play').setScale(0.40);
         let Brickbreaker = this.add.image(680,400, 'Brickbreaker').setScale(0.60);
 
 //tint for behind Play button (to be also used for other buttons)
@@ -277,11 +277,53 @@ class GameOver extends Phaser.Scene {
         this.load.image('Continue', 'Continue.png');
         this.load.image('Restart', 'Restart.png');
         this.load.image('Screenbackground', 'Screenbackground.png');
+        this.load.image('Brickbreaker', 'Brickbreaker.png');
     }
     create(){
         this.add.image(320,210, 'Screenbackground').setOrigin(0.25,0.30).setScale(0.70);
+        let Buttonbackground = this.add.image(500,870, 'Buttonbackground').setScale(0.40);
+        let Buttonbackground2 = this.add.image(900,870, 'Buttonbackground').setScale(0.40);
+        this.add.image(500,870, 'Restart').setScale(0.40);
+        this.add.image(900,870, 'Continue').setScale(0.40);
+        let Brickbreaker = this.add.image(680,400, 'Brickbreaker').setScale(0.60);
+        //this.add.text(20,20, "Level: 1").setFontSize(50);
+        this.add.text(550,700, 'Ball was dropped!', {color: '#000000'}).setFontSize(30);
+        this.add.text(400,970, 'Click Continue to retry the level', {color: '#000000'}).setFontSize(30);
+        this.add.text(340,999, 'Click Restart to return to the Homepage', {color: '#000000'}).setFontSize(30);
 
+        this.tweens.add({
+            targets: Brickbreaker,
+            y: '+=10', //move down by 10 pixels
+            ease: 'Sine.easeInOut',
+            duration: 1000,
+            yoyo: true,
+            repeat: -1
+        });
 
+//restart will take you to the Cover
+        Buttonbackground.setInteractive()
+            .on('pointerover', () => { Buttonbackground.setTint(0xff0000);
+            })
+            .on('pointerout', () => { Buttonbackground.clearTint();
+            })
+            .on('pointerdown', () => {
+                this.scene.start('Cover');
+                //this.gotoScene('Level1');
+
+        });
+
+//Continue will tak you back the level you lost at
+        Buttonbackground2.setInteractive()
+            .on('pointerover', () => { Buttonbackground2.setTint(0xff0000);
+            })
+            .on('pointerout', () => { Buttonbackground2.clearTint();
+            })
+            .on('pointerdown', () => {
+        // how to make it go back to the scene/level they lost on
+                //this.scene.start('Cover');
+                //this.gotoScene('Level1');
+        
+        });
     }
 }
 
@@ -294,10 +336,31 @@ class GameComplete extends Phaser.Scene {
         this.load.image('Buttonbackground', 'Buttonbackground.png');
         this.load.image('Restart', 'Restart.png');
         this.load.image('Screenbackground', 'Screenbackground.png');
+        this.load.image('Brickbreaker','Brickbreaker.png');
     }
     create(){
         this.add.image(320,210, 'Screenbackground').setOrigin(0.25,0.30).setScale(0.70);
+        let Buttonbackground = this.add.image(680,870, 'Buttonbackground').setScale(0.40);
+        this.add.image(680,870, 'Restart').setScale(0.40);
+        let Brickbreaker = this.add.image(680,400, 'Brickbreaker').setScale(0.60);
 
+        this.tweens.add({
+            targets: Brickbreaker,
+            y: '+=10', //move down by 10 pixels
+            ease: 'Sine.easeInOut',
+            duration: 1000,
+            yoyo: true,
+            repeat: -1
+        });
+        Buttonbackground.setInteractive()
+            .on('pointerover', () => { Buttonbackground.setTint(0xff0000);
+            })
+            .on('pointerout', () => { Buttonbackground.clearTint();
+            })
+            .on('pointerdown', () => {
+                this.scene.start('Cover');
+                //this.gotoScene('Level1');
+            });
         
     }
 }
@@ -331,7 +394,7 @@ const config = {
 //         height: 1070
 //     },
     //possibly combining: Result 1,2,and 3 with Game Over
-    scene: [Level1],
+    scene: [GameOver],
     //scene: [Cover, Level1, Level2, Level3, GameOver, GameComplete],
     title: "Pysics Game",
     physics:{
