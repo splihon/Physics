@@ -63,8 +63,8 @@ class Level1 extends Phaser.Scene {
 //resize and recrop wall images
         const Leftwall = this.add.image(100,468, 'Rightwall').setScale(0.50);
         const Rightwall = this.add.image(1190,468, 'Leftwall').setScale(0.50);
-        //const ball = this.physics.add.image('Ball').setScale(0.20);
-        //const Bar = this.add.image(600,1015, 'Bar').setScale(0.40);
+        //const Ball = this.physics.add.image('Ball').setScale(0.20);
+        const Bar = this.add.image(600,1015, 'Bar').setScale(0.40);
         //const cursors = this.input.keyboard.createCursorKeys();
 
         //Add more bricks(less color??)
@@ -82,16 +82,40 @@ class Level1 extends Phaser.Scene {
         //if this works i dont think i need the walls
         this.physics.world.setBoundsCollision(true, true, true, false);
 
+        this.bricks = this.physics.add.staticGroup();
+        const redBrick = this.bricks.create(850,870, 'Red').setScale(0.20);
+        const peachBrick = this.bricks.create(800,800, 'Peach').setScale(0.20);
+        const beigeBrick = this.bricks.create(600,600, 'Beige').setScale(0.20);
+
+
         this.bricks = this.physics.add.staticGroup({
-            key: 'assets', frame: ['Red','Peach','Beige'],
+            key: ['Red','Peach','Beige'],
             frameQuantity: 2,
-            gridAlign: {width: 2, height: 3, cellWidth: 64, cellHeight: 32, x: 112, y: 100}
+            gridAlign: {
+                width: 2, 
+                height: 3, 
+                cellWidth: 64, 
+                cellHeight: 32, 
+                x: 112, 
+                y: 100
+            }
         });
 
-        this.Ball = this.physics.add.image(600,950, 'assets', 'Ball').setColliderWorldBounds(true).setBounce(1).setScale(0.20);
+        // this.bricks = this.physics.add.staticGroup({
+        //     key: 'assets', frame: ['Red','Peach','Beige'],
+        //     frameQuantity: 2,
+        //     gridAlign: {width: 2, height: 3, cellWidth: 64, cellHeight: 32, x: 112, y: 100}
+        // });
+
+//for when ball hits bricks
+        // this.bricks.getchildren().forEach(brick => {
+        //     brick.setInteractive();
+
+
+        this.Ball = this.physics.add.image(600,950, 'Ball').setColliderWorldBounds(true).setBounce(1).setScale(0.20);
         this.Ball.setData('onBar', true);
 
-        this.Bar = this.physics.add.image(600,1015, 'assets', 'Bar').setImmovable().setScale(0.40);
+        this.Bar = this.physics.add.image(600,1015, 'Bar').setImmovable().setScale(0.40);
 
         this.physics.add.collider(this.Ball, this.bricks, this.hitBrick, null, this);
         this.physics.add.collider(this.Ball, this.Bar, this.hitBar, null, this);
@@ -118,14 +142,48 @@ class Level1 extends Phaser.Scene {
         }, this);
     }
 
-    hitBrick(Ball, brick)
-    {
+    hitBrick(Ball, brick){
         brick.disableBody(true, true);
         if (this.bricks.countActive()=== 0)
         {
             this.scene.start('Level2');
         }
     }
+
+    resetBall(){
+        this.Ball.setVelocity(0);
+        this.Ball.setPosition(this.Bar.x, 500);
+        this.Ball.setData('onBar', true);
+    }
+// //and i having more than one life?
+//     resetLevel(){
+//         this.resetBall();
+//         this.bricks.children.each(brick => {
+//             brick.enableBody(false, 0, 0, true, true);
+//         });
+//     }
+
+    hitBar(Ball, Bar){
+        let diff = 0;
+        if (Ball.x < Bar.x){
+            diff = Bar.x - Ball.x;
+            Ball.setVelocityX(-10*diff);
+        }
+        else if (Ball.x > Bar.x){
+            diff = Ball.x - Bar.x;
+            Ball.setVelocityX(10*diff);
+        }
+        else{
+            Ball.setVelocityX(2 + Math.random() *8 );
+        }
+    }
+
+    update(){
+        if (this.Ball.y > 600)
+        {this.resetBall();
+        }
+    }
+
     //Ball.setData('onBar',true);
         
         // Ball.setCollideWorldBounds(true);
@@ -191,7 +249,7 @@ class Level1 extends Phaser.Scene {
 //         });
     
 
-
+    
     }
 
 
@@ -394,7 +452,7 @@ const config = {
 //         height: 1070
 //     },
     //possibly combining: Result 1,2,and 3 with Game Over
-    scene: [GameOver],
+    scene: [Level1],
     //scene: [Cover, Level1, Level2, Level3, GameOver, GameComplete],
     title: "Pysics Game",
     physics:{
