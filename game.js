@@ -14,16 +14,28 @@ class Cover extends Phaser.Scene {
         this.add.image(320,210, 'Screenbackground').setOrigin(0.20,0.30).setScale(0.60);
         let Buttonbackground = this.add.image(240,800, 'Buttonbackground').setScale(0.40);
         this.add.image(240,800, 'Play').setScale(0.40);
-        this.add.image(240,800, 'Brickbreaker').setScale(0.40);
+        let Brickbreaker = this.add.image(240,800, 'Brickbreaker').setScale(0.40);
 
 //tint for behind Play button (to be also used for other buttons)
 //bounce for header??
 //delay on play button??
+        this.tweens.add({
+            targets: Brickbreaker,
+            y: '+=10', //move down by 10 pixels
+            ease: 'Sine.easeInOut',
+            duration: 1000,
+            yoyo: true,
+            repeat: -1
+        });
         Buttonbackground.setInteractive()
+            .on('pointerover', () => { Buttonbackground.setTint(0xff0000);
+            })
+            .on('pointerout', () => { Buttonbackground.clearTint();
+            })
             .on('pointerdown', () => {
                 //tint affect
                 this.gotoScene('Level1');
-            })
+            });
         }
 }
 
@@ -40,10 +52,11 @@ class Level1 extends Phaser.Scene {
         }
     create(){
 //combine these if can crop better if not just bring side of wall to side of crop
-        let Leftwall = this.add.image(850,870, 'Wall').setScale(0.40);
-        let Rightwall = this.add.image(850,870, 'Wall').setScale(0.40);
+        const Leftwall = this.add.image(850,870, 'Wall').setScale(0.40);
+        const Rightwall = this.add.image(850,870, 'Wall').setScale(0.40);
         this.add.image(850,870, 'Ball').setScale(0.40);
-        this.add.image(900,870, 'Bar').setScale(0.40);
+        const Bar = this.add.image(900,870, 'Bar').setScale(0.40);
+        const cursors = this.input.keyboard.createCursorKeys();
 //Add more bricks(less color??)
 //all colors but one of each and each level adds another row possibly (and top or bottom has effect of taking two hits)
         this.add.image(850,870, 'Red').setScale(0.40);
@@ -53,6 +66,27 @@ class Level1 extends Phaser.Scene {
 // 1: when bar misses ball go to game over/level lost with report of missing ball
 // 2: have lives what that when ball is missid starts again at the bar for three times edits lives: text and on third attempt goes to game over or level lost
 // when going to game over/level lost screen does it go back to scene or cover??
+
+//should I have an instruction page that explains how to control bar and what bricks take more than one hit??
+
+//bar
+//enable mouse input
+        this.input.on('pointermove', (pointer) => {
+            Bar.x = Phaser.Math.Clamp(pointer.x, Leftwall.width, this.sys.game.config.width - Rightwall.width);
+        });
+
+//Update the bar's position based on keyboard input
+        this.input.keyboard.on('keydown_LEFT', () => {
+            Bar.x -= 10;
+            Bar.x = Phaser.Math.Clamp(bar.x, Leftwall.width, this.sys.game.config.width - Rightwall.width);
+        });
+
+        this.input.keyboard.on('keydown_Right', () => {
+            Bar.x += 10;
+            Bar.x = Phaser.Math.Clamp(bar.x, Leftwall.width, this.sys.game.config.width - Rightwall.width);
+        });
+    
+
 
     }
 }
