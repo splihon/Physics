@@ -1,3 +1,9 @@
+//create so that ball starts moving when click up after restart
+//if 3 lives end to go game over
+//add scene for level complete
+//if lives go to zero and go to game over add function so that can go back to level lost on
+
+
 class Cover extends Phaser.Scene {
     constructor() {
         super("Cover");
@@ -44,6 +50,7 @@ class Cover extends Phaser.Scene {
 class Level1 extends Phaser.Scene {
     constructor() {
         super("Level1");
+        this.lives = 3;
     }
     preload() {
         this.load.path = './assets/';
@@ -57,13 +64,14 @@ class Level1 extends Phaser.Scene {
     }
     create() {
 
-        this.Leftwall = this.add.image(100, 468, 'Rightwall').setScale(0.50);
-        this.Rightwall = this.add.image(1190, 468, 'Leftwall').setScale(0.50);
+        this.Leftwall = this.add.image(20, 468, 'Rightwall').setScale(0.50);
+        this.Rightwall = this.add.image(1279, 468, 'Leftwall').setScale(0.50);
         this.Bar = this.physics.add.image(600, 1015, 'Bar')
             .setScale(0.40)
             .setImmovable(true);
         
         this.add.text(120, 20, "Level: 1", { color: '#000000'}).setFontSize(40);
+        this.livesText = this.add.text(380, 20, `Lives: ${this.lives}`,{color: '#000000'}).setFontSize(40);
         this.cameras.main.setBackgroundColor(0xf3e5ab);
 
         this.bricks = this.physics.add.staticGroup({
@@ -90,8 +98,8 @@ class Level1 extends Phaser.Scene {
         this.input.on('pointermove', (pointer) => {
             this.Bar.x = Phaser.Math.Clamp(
                 pointer.x,
-                650 - this.Bar.width / 2,
-                1455 - this.Bar.width / 2);
+                605 - this.Bar.width / 2,
+                1505 - this.Bar.width / 2);
         });
 
         this.resetBall();
@@ -101,7 +109,210 @@ class Level1 extends Phaser.Scene {
     hitBrick(Ball, brick) {
         brick.disableBody(true, true);
         if (this.bricks.countActive() === 0) {
+            //this.gotoScene('Level2')
             this.scene.start('Level2');
+        }
+    }
+
+    resetBall() {
+        // spawn the ball just above the bar with some velocity
+        this.Ball.setPosition(this.Bar.x, this.Bar.y-50);
+        this.Ball.setVelocity(-75, -300);
+        if (this.Ball.y >= this.Bar.y){
+            if(this.lives > 1){
+                this.lives--; //Decrease lives by 1
+                this.livesText.setText(`Lives: ${this.lives}`);
+                //this.resetBall();
+            } 
+            else {
+                this.livesText.setText(`Lives: 0`);
+                this.scene.start('GameOver');
+            }
+        }
+        this.resetBallPosition();
+    }
+
+    resetBallPosition(){
+        this.Ball.setPosition(this.Bar.x, this.Bar.y - 50);
+        this.Ball.setVelocity(-75, -300);
+    }
+
+    hitBar(Ball, Bar) {
+    
+    }
+
+    update() {
+        if (this.Ball.y > this.Bar.y) {
+            this.resetBall();
+        }
+    }
+}
+
+
+class Level2 extends Phaser.Scene {
+    constructor() {
+        super('Level2');
+        this.lives = 3;
+    }
+    preload() {
+        this.load.path = './assets/';
+        this.load.image('Ball', 'Ball.png');
+        this.load.image('Bar', 'Bar.png');
+        this.load.image('Leftwall', 'Leftwall.png');
+        this.load.image('Rightwall', 'Rightwall.png');
+        this.load.image('Yellow', 'Yellow.png');
+        this.load.image('Orange', 'Orange.png');
+        this.load.image('Green', 'Green.png');
+
+
+    }
+    create() {
+        //story lives in game registry
+        // this.registry.set('lives', this.lives);
+
+        this.Leftwall = this.add.image(20, 468, 'Rightwall').setScale(0.50);
+        this.Rightwall = this.add.image(1279, 468, 'Leftwall').setScale(0.50);
+        this.Bar = this.physics.add.image(600, 1015, 'Bar')
+            .setScale(0.40)
+            .setImmovable(true);
+        
+        this.add.text(120, 20, "Level: 2", { color: '#000000'}).setFontSize(40);
+        this.livesText = this.add.text(380, 20, 'Lives: 3', {color: '#000000'}).setFontSize(40);
+        //check registry
+        // this.registry.events.on('changedata', this.updateData, this);
+        this.cameras.main.setBackgroundColor(0xf3e5ab);
+
+        this.bricks = this.physics.add.staticGroup({
+            key: ['Orange', 'Yellow', 'Green'],
+            frameQuantity: 1,
+            gridAlign: {
+                width: 1,
+                height: 30,
+                cellWidth: 20,
+                cellHeight: 60,
+                x: 350,
+                y: 100
+            }
+        });
+
+        this.Ball = this.physics.add.image(600, 1015, 'Ball')
+            .setCollideWorldBounds(true)
+            .setBounce(1)
+            .setScale(0.20);
+
+        this.physics.add.collider(this.Ball, this.bricks, this.hitBrick, null, this);
+        this.physics.add.collider(this.Ball, this.Bar, this.hitBar, null, this);
+
+        this.input.on('pointermove', (pointer) => {
+            this.Bar.x = Phaser.Math.Clamp(
+                pointer.x,
+                605 - this.Bar.width / 2,
+                1505 - this.Bar.width / 2);
+        });
+
+        this.resetBall();
+        window.scene = this;
+    }
+
+    hitBrick(Ball, brick) {
+        brick.disableBody(true, true);
+        if (this.bricks.countActive() === 0) {
+            //this.gotoScene('Level3')
+            this.scene.start('Level3');
+        }
+    }
+
+    resetBall() {
+        if (this.lives === 0) {
+            this.scene.start('GameOver')
+        // spawn the ball just above the bar with some velocity
+        } else {
+            this.Ball.setPosition(this.Bar.x, this.Bar.y-50);
+            this.Ball.setVelocity(-75, -300);
+        }
+    }
+
+    hitBar(Ball, Bar) {
+    }
+
+    update() {
+        if (this.Ball.y > this.Bar.y) {
+            this.resetBall();
+        }
+    }
+    // updateData (parent, key, data)
+    // {
+    //     if 
+    // }
+}
+
+class Level3 extends Phaser.Scene {
+    constructor() {
+        super('Level3');
+    }
+    preload() {
+        this.load.path = './assets/';
+        this.load.image('Ball', 'Ball.png');
+        this.load.image('Bar', 'Bar.png');
+        this.load.image('Leftwall', 'Leftwall.png');
+        this.load.image('Rightwall', 'Rightwall.png');
+        this.load.image('Blue', 'Blue.png');
+        this.load.image('Green', 'Green.png');
+        this.load.image('Red', 'Red.png');
+        this.load.image('Orange', 'Orange.png');
+
+
+
+
+    }
+    create() {
+
+        this.Leftwall = this.add.image(20, 468, 'Rightwall').setScale(0.50);
+        this.Rightwall = this.add.image(1279, 468, 'Leftwall').setScale(0.50);
+        this.Bar = this.physics.add.image(600, 1015, 'Bar')
+            .setScale(0.40)
+            .setImmovable(true);
+        
+        this.add.text(120, 20, "Level: 3", { color: '#000000'}).setFontSize(40);
+        this.cameras.main.setBackgroundColor(0xf3e5ab);
+
+        this.bricks = this.physics.add.staticGroup({
+            key: ['Red', 'Orange', 'Green', 'Blue'],
+            frameQuantity: 1,
+            gridAlign: {
+                width: 1,
+                height: 30,
+                cellWidth: 20,
+                cellHeight: 60,
+                x: 350,
+                y: 100
+            }
+        });
+
+        this.Ball = this.physics.add.image(600, 1015, 'Ball')
+            .setCollideWorldBounds(true)
+            .setBounce(1)
+            .setScale(0.20);
+
+        this.physics.add.collider(this.Ball, this.bricks, this.hitBrick, null, this);
+        this.physics.add.collider(this.Ball, this.Bar, this.hitBar, null, this);
+
+        this.input.on('pointermove', (pointer) => {
+            this.Bar.x = Phaser.Math.Clamp(
+                pointer.x,
+                605 - this.Bar.width / 2,
+                1505 - this.Bar.width / 2);
+        });
+
+        this.resetBall();
+        window.scene = this;
+    }
+
+    hitBrick(Ball, brick) {
+        brick.disableBody(true, true);
+        if (this.bricks.countActive() === 0) {
+            //this.gotoScene('GameComplete')
+            this.scene.start('GameComplete');
         }
     }
 
@@ -118,75 +329,6 @@ class Level1 extends Phaser.Scene {
         if (this.Ball.y > this.Bar.y) {
             this.resetBall();
         }
-    }
-}
-
-
-class Level2 extends Phaser.Scene {
-    constructor() {
-        super('Level2');
-    }
-    preload() {
-        this.load.path = './assets/';
-        this.load.image('Ball', 'Ball.png');
-        this.load.image('Bar', 'Bar.png');
-        this.load.image('Leftwall', 'Leftwall.png');
-        this.load.image('Rightwall', 'Rightwall.png');
-        this.load.image('Red', 'Red.png');
-    }
-    create() {
-
-
-        //bar
-        //enable mouse input
-        this.input.on('pointermove', (pointer) => {
-            Bar.x = Phaser.Math.Clamp(pointer.x, Leftwall.width, this.sys.game.config.width - Rightwall.width);
-        });
-
-        //Update the bar's position based on keyboard input
-        this.input.keyboard.on('keydown_LEFT', () => {
-            Bar.x -= 10;
-            Bar.x = Phaser.Math.Clamp(bar.x, Leftwall.width, this.sys.game.config.width - Rightwall.width);
-        });
-
-        this.input.keyboard.on('keydown_Right', () => {
-            Bar.x += 10;
-            Bar.x = Phaser.Math.Clamp(bar.x, Leftwall.width, this.sys.game.config.width - Rightwall.width);
-        });
-    }
-}
-
-class Level3 extends Phaser.Scene {
-    constructor() {
-        super('Level3');
-    }
-    preload() {
-        this.load.path = './assets/';
-        this.load.image('Ball', 'Ball.png');
-        this.load.image('Bar', 'Bar.png');
-        this.load.image('Leftwall', 'Leftwall.png');
-        this.load.image('Rightwall', 'Rightwall.png');
-        this.load.image('Red', 'Red.png');
-    }
-    create() {
-
-
-        //bar
-        //enable mouse input
-        this.input.on('pointermove', (pointer) => {
-            Bar.x = Phaser.Math.Clamp(pointer.x, Leftwall.width, this.sys.game.config.width - Rightwall.width);
-        });
-
-        //Update the bar's position based on keyboard input
-        this.input.keyboard.on('keydown_LEFT', () => {
-            Bar.x -= 10;
-            Bar.x = Phaser.Math.Clamp(bar.x, Leftwall.width, this.sys.game.config.width - Rightwall.width);
-        });
-
-        this.input.keyboard.on('keydown_Right', () => {
-            Bar.x += 10;
-            Bar.x = Phaser.Math.Clamp(bar.x, Leftwall.width, this.sys.game.config.width - Rightwall.width);
-        });
     }
 }
 
@@ -270,6 +412,9 @@ class GameComplete extends Phaser.Scene {
         let Buttonbackground = this.add.image(680, 870, 'Buttonbackground').setScale(0.40);
         this.add.image(680, 870, 'Restart').setScale(0.40);
         let Brickbreaker = this.add.image(680, 400, 'Brickbreaker').setScale(0.60);
+        this.add.text(550, 700, 'Congrats!', { color: '#000000' }).setFontSize(30);
+        this.add.text(400, 970, 'You broke all the bricks!', { color: '#000000' }).setFontSize(30);
+        this.add.text(340, 999, 'Click Restart to return to Homepage', { color: '#000000' }).setFontSize(30);
 
         this.tweens.add({
             targets: Brickbreaker,
@@ -297,7 +442,7 @@ const config = {
     type: Phaser.WEBGL,
     width: 1300,
     height: 1070,
-    scene: [Level1],
+    scene: [Level3, GameComplete, Cover],
     //scene: [Cover, Level1, Level2, Level3, GameOver, GameComplete],
     title: "Pysics Game",
     physics: {
