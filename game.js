@@ -1,9 +1,3 @@
-//create so that ball starts moving when click up after restart
-//if 3 lives end to go game over
-//add scene for level complete
-//if lives go to zero and go to game over add function so that can go back to level lost on
-
-
 class Cover extends Phaser.Scene {
     constructor() {
         super("Cover");
@@ -148,6 +142,67 @@ class Level1 extends Phaser.Scene {
     }
 }
 
+class Rl1 extends Phaser.Scene {
+    constructor() {
+        super('Rl1');
+    }
+    preload() {
+        this.load.path = './assets/';
+        this.load.image('Buttonbackground', 'Buttonbackground.png');
+        this.load.image('Continue', 'Continue.png');
+        this.load.image('Restart', 'Restart.png');
+        this.load.image('Screenbackground', 'Screenbackground.png');
+        this.load.image('Brickbreaker', 'Brickbreaker.png');
+    }
+    create() {
+        this.add.image(320, 210, 'Screenbackground').setOrigin(0.25, 0.30).setScale(0.70);
+        let Buttonbackground = this.add.image(500, 870, 'Buttonbackground').setScale(0.40);
+        let Buttonbackground2 = this.add.image(900, 870, 'Buttonbackground').setScale(0.40);
+        this.add.image(500, 870, 'Restart').setScale(0.40);
+        this.add.image(900, 870, 'Continue').setScale(0.40);
+        let Brickbreaker = this.add.image(680, 400, 'Brickbreaker').setScale(0.60);
+        this.add.text(390, 750, 'You broke all the bricks!', { color: '#000000' }).setFontSize(40);
+        this.add.text(455, 700, 'Level 1 Complete!', { color: '#000000' }).setFontSize(45);
+        this.add.text(345, 970, 'Click Continue to start the next level.', { color: '#000000' }).setFontSize(30);
+        this.add.text(340, 999, 'Click Restart to return to the Homepage.', { color: '#000000' }).setFontSize(30);
+
+        this.tweens.add({
+            targets: Brickbreaker,
+            y: '+=10', //move down by 10 pixels
+            ease: 'Sine.easeInOut',
+            duration: 1000,
+            yoyo: true,
+            repeat: -1
+        });
+
+        //restart will take you to the Cover
+        Buttonbackground.setInteractive()
+            .on('pointerover', () => {
+                Buttonbackground.setTint(0xff0000);
+            })
+            .on('pointerout', () => {
+                Buttonbackground.clearTint();
+            })
+            .on('pointerdown', () => {
+                this.scene.start('Cover');
+                //this.gotoScene('Level1');
+
+            });
+
+        //Continue 
+        Buttonbackground2.setInteractive()
+            .on('pointerover', () => {
+                Buttonbackground2.setTint(0xff0000);
+            })
+            .on('pointerout', () => {
+                Buttonbackground2.clearTint();
+            })
+            .on('pointerdown', () => {
+                this.scene.start('Level2');
+
+            });
+    }
+}
 
 class Level2 extends Phaser.Scene {
     constructor() {
@@ -246,6 +301,68 @@ class Level2 extends Phaser.Scene {
     // }
 }
 
+class Rl2 extends Phaser.Scene {
+    constructor() {
+        super('Rl2');
+    }
+    preload() {
+        this.load.path = './assets/';
+        this.load.image('Buttonbackground', 'Buttonbackground.png');
+        this.load.image('Continue', 'Continue.png');
+        this.load.image('Restart', 'Restart.png');
+        this.load.image('Screenbackground', 'Screenbackground.png');
+        this.load.image('Brickbreaker', 'Brickbreaker.png');
+    }
+    create() {
+        this.add.image(320, 210, 'Screenbackground').setOrigin(0.25, 0.30).setScale(0.70);
+        let Buttonbackground = this.add.image(500, 870, 'Buttonbackground').setScale(0.40);
+        let Buttonbackground2 = this.add.image(900, 870, 'Buttonbackground').setScale(0.40);
+        this.add.image(500, 870, 'Restart').setScale(0.40);
+        this.add.image(900, 870, 'Continue').setScale(0.40);
+        let Brickbreaker = this.add.image(680, 400, 'Brickbreaker').setScale(0.60);
+        this.add.text(390, 750, 'You broke all the bricks!', { color: '#000000' }).setFontSize(40);
+        this.add.text(455, 700, 'Level 2 Complete!', { color: '#000000' }).setFontSize(45);
+        this.add.text(345, 970, 'Click Continue to start the next level.', { color: '#000000' }).setFontSize(30);
+        this.add.text(340, 999, 'Click Restart to return to the Homepage.', { color: '#000000' }).setFontSize(30);
+
+        this.tweens.add({
+            targets: Brickbreaker,
+            y: '+=10', //move down by 10 pixels
+            ease: 'Sine.easeInOut',
+            duration: 1000,
+            yoyo: true,
+            repeat: -1
+        });
+
+        //restart will take you to the Cover
+        Buttonbackground.setInteractive()
+            .on('pointerover', () => {
+                Buttonbackground.setTint(0xff0000);
+            })
+            .on('pointerout', () => {
+                Buttonbackground.clearTint();
+            })
+            .on('pointerdown', () => {
+                this.scene.start('Cover');
+                //this.gotoScene('Level1');
+
+            });
+
+        //Continue 
+        Buttonbackground2.setInteractive()
+            .on('pointerover', () => {
+                Buttonbackground2.setTint(0xff0000);
+            })
+            .on('pointerout', () => {
+                Buttonbackground2.clearTint();
+            })
+            .on('pointerdown', () => {
+                this.scene.start('Level3');
+
+            });
+    }
+}
+
 class Level3 extends Phaser.Scene {
     constructor() {
         super('Level3');
@@ -274,6 +391,7 @@ class Level3 extends Phaser.Scene {
             .setImmovable(true);
         
         this.add.text(120, 20, "Level: 3", { color: '#000000'}).setFontSize(40);
+        this.livesText = this.add.text(380, 20, 'Lives: 3', {color: '#000000'}).setFontSize(40);
         this.cameras.main.setBackgroundColor(0xf3e5ab);
 
         this.bricks = this.physics.add.staticGroup({
@@ -352,7 +470,8 @@ class GameOver extends Phaser.Scene {
         this.add.image(900, 870, 'Continue').setScale(0.40);
         let Brickbreaker = this.add.image(680, 400, 'Brickbreaker').setScale(0.60);
         //this.add.text(20,20, "Level: 1").setFontSize(50);
-        this.add.text(550, 700, 'Ball was dropped!', { color: '#000000' }).setFontSize(30);
+        this.add.text(545, 700, 'Game Over!', { color: '#000000' }).setFontSize(45);
+        this.add.text(380, 750, 'You have run out of lives!', { color: '#000000' }).setFontSize(40);
         this.add.text(400, 970, 'Click Continue to retry the level', { color: '#000000' }).setFontSize(30);
         this.add.text(340, 999, 'Click Restart to return to the Homepage', { color: '#000000' }).setFontSize(30);
 
@@ -412,9 +531,9 @@ class GameComplete extends Phaser.Scene {
         let Buttonbackground = this.add.image(680, 870, 'Buttonbackground').setScale(0.40);
         this.add.image(680, 870, 'Restart').setScale(0.40);
         let Brickbreaker = this.add.image(680, 400, 'Brickbreaker').setScale(0.60);
-        this.add.text(550, 700, 'Congrats!', { color: '#000000' }).setFontSize(30);
-        this.add.text(400, 970, 'You broke all the bricks!', { color: '#000000' }).setFontSize(30);
-        this.add.text(340, 999, 'Click Restart to return to Homepage', { color: '#000000' }).setFontSize(30);
+        this.add.text(550, 700, 'Congrats!', { color: '#000000' }).setFontSize(45);
+        this.add.text(345, 750, 'You completed all the levels!', { color: '#000000' }).setFontSize(40);
+        this.add.text(390, 980, 'Click Restart to return to Homepage.', { color: '#000000' }).setFontSize(30);
 
         this.tweens.add({
             targets: Brickbreaker,
@@ -442,8 +561,8 @@ const config = {
     type: Phaser.WEBGL,
     width: 1300,
     height: 1070,
-    scene: [Level3, GameComplete, Cover],
-    //scene: [Cover, Level1, Level2, Level3, GameOver, GameComplete],
+    //scene: [Cover],
+    scene: [Cover, Level1, Rl1, Level2, Rl2, Level3, GameOver, GameComplete],
     title: "Pysics Game",
     physics: {
         default: 'arcade'
